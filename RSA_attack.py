@@ -13,6 +13,11 @@ def generate_rsa_keypair_with_shared_p(p, bits=2048):
 def find_shared_factor(n1, n2):
     return math.gcd(n1, n2)
 
+# Generate RSA key pairs with unshared factors (First revision)
+def generate_rsa_keypair(bits=2048):
+    key = RSA.generate(bits)
+    return key
+
 def recover_private_key(n, e, shared_factor):
     q = n // shared_factor 
     phi = (shared_factor - 1) * (q - 1) 
@@ -34,8 +39,6 @@ def main():
     private_key = recover_private_key(key1.n, key1.e, shared_factor)
     print(f"Recovered private key (d): {private_key}")
 
-    # test for git
-    #111
 
 if __name__ == "__main__":
     main()
