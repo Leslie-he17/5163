@@ -1,6 +1,5 @@
 from Crypto.PublicKey import RSA
-from Crypto.Util.number import getPrime, GCD, inverse
-import math
+from Crypto.Util.number import getPrime, inverse
 
 # Generate custom RSA key pairs, ensuring a shared factor p
 def generate_rsa_keypair_with_shared_p(p, bits=2048):
@@ -16,9 +15,11 @@ def generate_rsa_keypair(bits=2048):
     key = RSA.generate(bits)
     return key
 
-# Find the shared factor between two RSA moduli via GCD
+# Find the shared factor between two RSA moduli via Euclidean algorithm - iterative method
 def find_shared_factor(n1, n2):
-    return math.gcd(n1, n2)
+    while n2:
+        n1, n2 = n2, n1 % n2
+    return n1
 
 # Recovering private keys with shared factors (Second revision_check)
 def recover_private_key(n, e, shared_factor):
