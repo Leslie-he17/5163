@@ -21,6 +21,18 @@ def find_shared_factor(n1, n2):
         n1, n2 = n2, n1 % n2
     return n1
 
+# Find shared factor among multiple RSA moduli
+def find_shared_factor_among_multiple_moduli(moduli):
+    shared_factor = moduli[0]
+    # Calculate the GCD of each subsequent modulus with the current "shared factor"
+    for modulus in moduli[1:]:
+        shared_factor = find_shared_factor(shared_factor, modulus)
+        # If GCD is found to be 1, there is no shared factor and can exit early
+        if shared_factor == 1:
+            return print('no common factor among those moduli')
+    return shared_factor
+
+
 # Recovering private keys with shared factors (Second revision_check)
 def recover_private_key(n, e, shared_factor):
     q = n // shared_factor  # Compute another prime q from the modulus n and the sharing factor p
