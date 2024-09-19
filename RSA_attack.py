@@ -47,9 +47,7 @@ def recover_private_key(n, e, shared_factor):
 
 # Encrypt message
 def encrypt_message(m,e,n):
-    c = 1
-    for i in range(e):
-        c = (c*m) % n
+    c = pow(m, e, n)
     return c
 
 # Decrypt message
