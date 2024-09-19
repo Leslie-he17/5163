@@ -23,7 +23,6 @@ phi_n1 = (p_512 - 1) * (q1_512 - 1)
 phi_n2 = (p_512 - 1) * (q2_512 - 1)
 
 
-
 def gcd(a, b):
     while b:
         a, b = b, a % b
