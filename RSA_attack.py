@@ -8,7 +8,7 @@ def generate_rsa_keypair_with_shared_p(p, bits=2048):
     e = 65537
     phi = (p - 1) * (q - 1) # Calculate the Euler function φ(n)
     d = inverse(e, phi) # Calculate the private key - d
-    return RSA.construct((n, e, d, p, q))
+    return RSA.construct((n, e,d, p, q))
 
 # Generate RSA key pairs with unshared factors
 def generate_rsa_keypair(bits=2048):
@@ -42,12 +42,33 @@ def find_shared_factor_among_multiple_moduli(moduli):
 def recover_private_key(n, e, shared_factor):
     q = n // shared_factor  # Compute another prime q from the modulus n and the sharing factor p
     phi = (shared_factor - 1) * (q - 1) 
-    d = pow(e, -1, phi)  # calculate the private key d
-    return d
+    a, b = e, phi
+    x0, x1 = 1, 0  # Initialize x0 and x1
+
+    while b != 0:
+        q_div = a // b
+        a, b = b, a % b
+        x0, x1 = x1, x0 - q_div * x1  # Update x0 and x1
+
+    if a != 1:
+        raise Exception('e and φ(n) are not coprime, cannot compute private exponent d')
+
+    d = x0 % phi  # Ensure d is positive
+
+    return d 
 
 # Encrypt message
 def encrypt_message(m,e,n):
-    c = pow(m, e, n)
+    c = 1
+    exponent = e
+    base = m % n
+
+    while exponent > 0:
+        if exponent % 2 == 1:
+            c = (c * base) % n
+        exponent = exponent // 2
+        base = (base * base) % n
+
     return c
 
 # Decrypt message
@@ -88,12 +109,16 @@ def demo(bits):
     moduli_no_share = [key1.n, key4.n, key3.n, key4.n]
 
     find = find_shared_factor_among_multiple_moduli(moduli_share)
+    if find is None:
+        print("No shared factor found")
+        return
     if p == find:
         print(f"the identified shared common factor is equal to the p we manually generate \n")
 
     find_no_share = find_shared_factor_among_multiple_moduli(moduli_no_share)
 
     private_key_recovered = recover_private_key(key1.n, key1.e, find)
+    
     m = 5163
     print(f"Original message: {m}")
 
